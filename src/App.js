@@ -60,10 +60,7 @@ class AddressForm extends React.Component {
   render() {
     return (
       <form onSubmit={this.handleSubmit}>
-        {/* <label>
-          Address: 
-          <textarea value={this.state.value} onChange={this.handleChange} />
-        </label> */}
+
         <input className="address-input"
           name={"street_address"}
           value={this.state.street_address}

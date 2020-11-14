@@ -2,7 +2,6 @@
 Assesses (human)risk for buying a piece of property in a given area 
 
 # To Run Locally with Flask Server
-* Uncomment code in App.js
 * Open 2 terminals
 * Run ```npm run-script start-api``` in one terminal
 * Run ```npm start``` in the other terminal

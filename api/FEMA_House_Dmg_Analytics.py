@@ -1,8 +1,10 @@
 import pandas as pd
+import requests
 
 class Disaster_Stats():
-    def __init__(self, fp):
-        self.disasters_csv = pd.read_csv(fp)
+    def __init__(self):
+        self.disasters_csv = requests.get("https://www.fema.gov/api/open/v2/HousingAssistanceOwners").json()
+        self.disasters_csv = pd.DataFrame.from_dict(self.disasters_csv["HousingAssistanceOwners"])
 
     def get_state_level_disasters(self, state_str):
         return self.disasters_csv[self.disasters_csv['state'] == state_str]
