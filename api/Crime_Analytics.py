@@ -8,14 +8,15 @@ regions = ['Northeast', 'South', 'West', 'Midwest']
 offenses = ['aggravated-assault', 'burglary', 'larceny', 'motor-vehicle-theft', 'homicide', 'rape', 'robbery', 'arson',
             'violent-crime', 'property-crime']
 
+
 class Crime_Stats():
 
-    def __init__(self, rq_key):
-        self.crime_csv = pd.read_csv(requests.get(rq_key).json())
+    def __init__(self):
+        pass
 
     def get_region_offense_number(self, region, offense):
         response = requests.get(url1 + region + url2 + offense + url3 +
-                                 'API_KEY=iiHnOKfno2Mgkt5AynpvPpUQTEyxE77jo1RU8PIv')
+                                'API_KEY=iiHnOKfno2Mgkt5AynpvPpUQTEyxE77jo1RU8PIv')
         df = pd.DataFrame.from_dict(response.json()["data"])
         total = df['value'].sum()
         return total
@@ -27,7 +28,8 @@ class Crime_Stats():
         return total
 
     def get_region_offense_proportion(self, region, offense):
-        return self.get_region_offense_numbers(self, region, offense) / self.get_region_offense_array(self, region).sum()
+        return self.get_region_offense_numbers(self, region, offense) / self.get_region_offense_array(self,
+                                                                                                      region).sum()
 
     def get_region_offense_array(self, region):
         offenseNums = []
@@ -37,7 +39,7 @@ class Crime_Stats():
     def get_region_top_three_offense_proportions(self, region):
         offenseNums = self.get_region_offense_numbers()
         firstIndex, secondIndex, thirdIndex = 0, 0, 0
-        for i in range (0, len(offenseNums)):
+        for i in range(0, len(offenseNums)):
             if offenseNums[i] > offenseNums[firstIndex]:
                 firstIndex = i
             elif offenseNums[i] > offenseNums[secondIndex]:
@@ -62,4 +64,3 @@ class Crime_Stats():
         topOffenseProps[1] = secondProp
         topOffenseProps[2] = thirdProp
         return topOffenseProps
-    
