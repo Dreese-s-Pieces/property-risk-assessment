@@ -1,4 +1,6 @@
 import pandas as pd
+from scipy.stats import t
+import numpy as np
 import requests
 
 def make_dataframe(r):
@@ -22,7 +24,7 @@ class AirQualityAnalytics():
         self.url = "https://api.waqi.info/feed/" + self.city_str + "/?token=fe269bc83b983ff958090f5808afa12eed57f14f"
 
     def one_samp_t_test(self, df, city_str):
-        return (df[df['name'].split(",")[0] == city_str]['aqi']-df['aqi'].mean())/(df['aqi'].var()**(1/2)/ df.count()**(1/2))
+        return (df[df['name'].split(",")[0] == city_str]['aqi']-df['aqi'].mean())/(df['aqi'].var() / df.count())**(1/2)
 
     def get_local_air_quality_comparison(self, city_str):
         self.city_str = city_str
@@ -30,7 +32,8 @@ class AirQualityAnalytics():
         local_df = make_dataframe(req_data)
         air_quality_comp = dict()
         air_quality_comp['Deviation of AQI From Closest Cities'] = local_df[local_df['name'].split(',')[0] == city_str]['aqi'].sum()-local_df['aqi'].sum()/local_df.count()
-        air_quality_comp['Probability of AQI Being Significantly Different From Surrounding Cities'] = self.one_samp_t_test(local_df, self.city_str)
+        air_quality_comp['Probability of AQI Being Significantly Different From Surrounding Cities'] = self.one_samp_t_test(local_df[local_df['name'].split(',')[0] != city_str], self.city_str)
+        air_quality_comp['Probability of AQI Being Significantly Different From Surrounding Cities'] = t.sf(np.abs(air_quality_comp['Probability of AQI Being Significantly Different From Surrounding Cities']), local_df.count()-1)
 
         return air_quality_comp
 
