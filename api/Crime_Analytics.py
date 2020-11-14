@@ -3,8 +3,9 @@ import requests
 
 response = requests.get('https://api.usa.gov/crime/fbi/sapi/api/nibrs/aggravated-assault/offender/regions/Midwest/age?'
                         'API_KEY=iiHnOKfno2Mgkt5AynpvPpUQTEyxE77jo1RU8PIv')
-print(response.json())
 
+df = pd.DataFrame.from_dict(response.json()["data"])
+print(df.head(5))
 # print(response.json())
 # crime_df = pd.DataFrame.from_dict(response.json())
 # print(crime_df.head(5))
