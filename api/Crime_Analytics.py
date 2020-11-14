@@ -1,40 +1,65 @@
 import pandas as pd
 import requests
 
-response = requests.get('https://api.usa.gov/crime/fbi/sapi/api/nibrs/aggravated-assault/offender/regions/Midwest/age?'
-                        'API_KEY=iiHnOKfno2Mgkt5AynpvPpUQTEyxE77jo1RU8PIv')
+url1 = 'https://api.usa.gov/crime/fbi/sapi/api/nibrs/'
+url2 = '/offender/regions/'
+url3 = '/age?'
+regions = ['Northeast', 'South', 'West', 'Midwest']
+offenses = ['aggravated-assault', 'burglary', 'larceny', 'motor-vehicle-theft', 'homicide', 'rape', 'robbery', 'arson',
+            'violent-crime', 'property-crime']
 
-df = pd.DataFrame.from_dict(response.json()["data"])
-print(df.head(5))
-# print(response.json())
-# crime_df = pd.DataFrame.from_dict(response.json())
-# print(crime_df.head(5))
 class Crime_Stats():
 
     def __init__(self, rq_key):
         self.crime_csv = pd.read_csv(requests.get(rq_key).json())
 
-    def get_state_level_disasters(self, state_str):
-        return self.crime_csv[self.crime_csv['state'] == state_str]
+    def get_region_offense_number(self, region, offense):
+        response = requests.get(url1 + region + url2 + offense + url3 +
+                                 'API_KEY=iiHnOKfno2Mgkt5AynpvPpUQTEyxE77jo1RU8PIv')
+        df = pd.DataFrame.from_dict(response.json()["data"])
+        total = df['value'].sum()
+        return total
 
-    def get_state_national_proportion_of_certain_disaster(self, disaster, state_str):
-        state_csv = self.disasters_csv.get_state_level_get_state_level_disasters(state_str)
-        state_csv = state_csv[state_csv['declarationTitle'] == disaster]
-        nat_csv = self.disasters_csv[self.disasters_csv['declarationTitle'] == disaster]
-        return state_csv.count()/nat_csv.count()
+    def get_national_offense_number(self, offense):
+        total = 0
+        for region in regions:
+            total += self.get_region_offense_number(self, region, offense)
+        return total
 
-    def get_total_dmg_for_zip(self, zip_str):
-        return self.disasters_csv[self.disasters_csv['zipCode'] == zip_str]['averageFemaInspectedDamage'].sum()
+    def get_region_offense_proportion(self, region, offense):
+        return self.get_region_offense_numbers(self, region, offense) / self.get_region_offense_array(self, region).sum()
 
-    def get_total_dmg_for_state(self, state_str):
-        return self.disasters_csv[self.disasters_csv['state'] == state_str]['averageFemaInspectedDamage'].sum()
+    def get_region_offense_array(self, region):
+        offenseNums = []
+        for i in range(0, len(offenses)):
+            offenseNums[i] = self.get_region_offense_numbers(region, offenses[i])
 
-    def get_total_dmg(self):
-        return self.disasters_csv['averageFemaInspectedDamage'].sum()
+    def get_region_top_three_offense_proportions(self, region):
+        offenseNums = self.get_region_offense_numbers()
+        firstIndex, secondIndex, thirdIndex = 0, 0, 0
+        for i in range (0, len(offenseNums)):
+            if offenseNums[i] > offenseNums[firstIndex]:
+                firstIndex = i
+            elif offenseNums[i] > offenseNums[secondIndex]:
+                secondIndex = i
+            elif offenseNums[i] > offenseNums[thirdIndex]:
+                thirdIndex = i
 
-    def get_prop_zip_dmg_for_state(self, zip_str,state_str):
-        return self.disasters_csv.get_total_dmg_for_zip(zip_str)/self.disasters_csv.get_total_dmg_for_state(state_str)
-
-    def get_prop_zip_dmg_for_nation(self, zip_str):
-        return self.disasters_csv.get_total_dmg_for_zip(zip_str)/self.disasters_csv.get_total_dmg()
-
+        topOffenseProps, firstProp, secondProp, thirdProp = [], [], [], []
+        firstProp[0] = offenses[firstIndex]
+        firstProp[1] = self.get_region_offense_proportion(self, region, offenses[firstIndex])
+        firstProp[2] = self.get_region_offense_number(self, region, offenses[firstIndex]) / \
+                       self.get_national_offense_number(self, offenses[firstIndex])
+        secondProp[0] = offenses[secondIndex]
+        secondProp[1] = self.get_region_offense_proportion(self, region, offenses[secondIndex])
+        secondProp[2] = self.get_region_offense_number(self, region, offenses[secondIndex]) / \
+                        self.get_national_offense_number(self, offenses[secondIndex])
+        thirdProp[0] = offenses[thirdIndex]
+        thirdProp[1] = self.get_region_offense_proportion(self, region, offenses[thirdIndex])
+        thirdProp[2] = self.get_region_offense_number(self, region, offenses[thirdIndex]) / \
+                       self.get_national_offense_number(self, offenses[thirdIndex])
+        topOffenseProps[0] = firstProp
+        topOffenseProps[1] = secondProp
+        topOffenseProps[2] = thirdProp
+        return topOffenseProps
+    
