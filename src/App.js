@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import './App.css';
 
 export default App;
@@ -15,28 +15,25 @@ class TopComponent extends React.Component {
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
-
     this.state = {
       street_address: '',
       city: '',
       state: '',
       zip_code: '',
-      total_dmg_for_zip: '',
+      result: '',
     };
   }
 
   handleChange(event) {
-    console.log(event.target.name)
     this.setState({[event.target.name]: event.target.value});
   } 
 
   handleSubmit(event) {
-    alert('Searching for address: ' + this.state.street_address);
-
-    let url = '/disaster/state_level_disasters?state=' + this.state.state + '&zip=' + this.state.zip_code
+    let url = '/disaster?state=' + this.state.state + '&zip=' + this.state.zip_code
 
     fetch(url).then(res => res.json()).then(data => {
       console.log(data);
+      this.setState({result: data})
     });
 
     event.preventDefault();
@@ -50,78 +47,61 @@ class TopComponent extends React.Component {
         </header>
         <div className='row-container'>
           <div className='address-form'>
-            <AddressForm 
-              state="state"
-              onSubmit={this.handleSubmit}
-              onChange={this.handleChange} />
+            <form onSubmit={this.handleSubmit}>
+
+            <input className="address-input"
+              name={"street_address"}
+              value={this.state.street_address}
+              placeholder={"Enter street address"}
+              onChange={this.handleChange}
+            />
+            <br/>
+            <input className="address-input"
+              name={"city"}
+              value={this.state.city}
+              placeholder={"Enter city"}
+              onChange={this.handleChange}
+            />
+            <br/>
+
+            <input className="address-input"
+              name={"state"}
+              value={this.state.state}
+              placeholder={"Enter state (Abbreviation)"}
+              onChange={this.handleChange}
+            />
+            <br/>
+
+            <input className="address-input"
+              name={"zip_code"}
+              value={this.state.zip_code}
+              placeholder={"Enter zip code"}
+              onChange={this.handleChange}
+            />
+            <br/>
+            <input className="address-input"
+              type="submit" 
+              value="Submit"
+            />
+            </form>
           </div>
 
           <div className='display-container'>
-            <Display
-              state="state" />
+            <p>Street Address: {this.state.street_address}</p>
+            <p>City: {this.state.city}</p>
+            <p>State: {this.state.state}</p>
+            <p>Zip Code: {this.state.zip_code}</p>
+
+            <br/>
+
+            <p>Total Damage for Zip: {this.state.result.total_dmg_for_zip}</p>
+            <p>Total Damage for State: {this.state.result.total_dmg_for_state}</p>
+            <p>Total Damage: {this.state.result.total_dmg}</p>
+            <p>Property Damage for State: {this.state.result.prop_zip_dmg_for_state}</p>
+            <p>Property Damage for Nation: {this.state.result.prop_zip_dmg_for_nation}</p>
           </div>
         </div>
       </div>
-    );
-  }
-}
-
-class AddressForm extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    return (
-      <form onSubmit={this.props.onSubmit}>
-
-        <input className="address-input"
-          name={"street_address"}
-          value={this.props.state.street_address}
-          placeholder={"Enter street address"}
-          onChange={this.props.OnChange}
-        />
-        <br/>
-        <input className="address-input"
-          name={"city"}
-          value={this.props.state.city}
-          placeholder={"Enter city"}
-          onChange={this.props.OnChange}
-        />
-        <br/>
-
-        <input className="address-input"
-          name={"state"}
-          value={this.props.state.state}
-          placeholder={"Enter state"}
-          onChange={this.props.OnChange}
-        />
-        <br/>
-
-        <input className="address-input"
-          name={"zip_code"}
-          value={this.props.state.zip_code}
-          placeholder={"Enter zip code"}
-          onChange={this.props.OnChange}
-        />
-        <br/>
-        <input className="address-input"
-          type="submit" 
-          value="Submit"
-        />
-      </form>
-    );
-  }
-}
-
-class Display extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    return (
-      <p>Total Damage for Zip: {this.props.state.total_dmg_for_zip}</p>
     );
   }
 }
