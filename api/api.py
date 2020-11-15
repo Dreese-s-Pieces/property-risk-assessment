@@ -25,10 +25,8 @@ def get_data():
         region = 'West'
 
     result = { 'region': region }
-    try:
-        result.update(get_zip_dmg(zip, state))
-    except:
-        pass
+    result.update(get_zip_dmg(zip, state))
+
 
     try:
         result.update(get_crime_analytics_data(region))
@@ -39,6 +37,8 @@ def get_data():
         result.update(get_air_quality_data(zip, city))
     except:
         pass
+
+    print(result)
 
     return result
 
@@ -51,8 +51,8 @@ def get_zip_dmg(zp, state):
         'total_dmg_for_state': dis_stats.get_total_dmg_for_state(state),
         'total_dmg': dis_stats.get_total_dmg(),
         'prop_zip_dmg_for_state': dis_stats.get_prop_zip_dmg_for_state(zp, state),
-        'prop_zip_dmg_for_nation': dis_stats.get_prop_zip_dmg_for_nation(zp),
-        'predicted_zip_dmg': dis_stats.inference(zp)
+        'prop_zip_dmg_for_nation': dis_stats.get_prop_zip_dmg_for_nation(zp)
+        # 'predicted_zip_dmg': dis_stats.inference(zp)
     }
 
 

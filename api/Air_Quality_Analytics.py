@@ -39,17 +39,21 @@ class Air_Quality_Analytics():
         r = requests.get("https://api.waqi.info/" + f"/map/bounds/?latlng={latlngbx}&token={token}").json()
         if len(r['data']) > 0:
             local_df = make_dataframe(r)
-            air_quality_comp = dict()
-            air_quality_comp['Deviation of AQI From Closest Cities'] = local_df[local_df['name'].str.contains(city_str)][
-                                                                           'aqi'].mean() - local_df[
-                                                                           'aqi'].mean()
-            air_quality_comp[
-                'Probability of AQI Being Significantly Better Than Surrounding Cities'] = one_samp_t_test(
-                local_df[local_df['name'].str.contains(city_str)], air_quality_comp['Deviation of AQI From Closest '
-                                                                                    'Cities'] )
-            air_quality_comp['Probability of AQI Being Significantly Better Than Surrounding Cities'] = t.sf(
-                np.abs(air_quality_comp['Probability of AQI Being Significantly Better Than Surrounding Cities']),
-                local_df.count() - 1)[0]
+            air_quality_comp = {
+                'deviation': 'Not found',
+                'probability': 'Not found'
+            }
+
+            deviation = local_df[local_df['name'].str.contains(city_str)]['aqi'].mean() - local_df['aqi'].mean()
+
+            if not np.isnan(deviation):
+                air_quality_comp['deviation'] = deviation
+
+            probability = one_samp_t_test(local_df[local_df['name'].str.contains(city_str)], deviation)
+            probability = t.sf(np.abs(probability), local_df.count() - 1)[0]
+
+            if not np.isnan(probability):
+                air_quality_comp['probability'] = probability
 
             return air_quality_comp
 

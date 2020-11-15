@@ -63,7 +63,6 @@ class Disaster_Stats():
             return 0
 
         return result
-        return self.get_total_dmg_for_zip(zip_str) / self.get_total_dmg()
 
     def train(self):
         X_train = self.disasters_csv.loc[:, self.disasters_csv.columns != 'averageFemaInspectedDamage']
@@ -94,4 +93,4 @@ class Disaster_Stats():
 
 ds_stats = Disaster_Stats()
 ds_stats.train()
-print(ds_stats.inference(zip_code=43017))
+# print(ds_stats.inference(zip_code=43017))

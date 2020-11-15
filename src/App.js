@@ -30,6 +30,7 @@ class TopComponent extends React.Component {
         deviation: '',
         probability: ''
       },
+      loading: false
     };
 
 
@@ -40,24 +41,27 @@ class TopComponent extends React.Component {
   } 
 
   handleSubmit(event) {
+    event.preventDefault();
 
+    this.setState({loading: true});
     let url = '/data?state=' + this.state.state + '&zip=' + this.state.zip_code + '&city=' + this.state.city
 
 
     fetch(url).then(res => res.json()).then(data => {
       console.log(data);
       this.setState({result: data})
-
+    }).finally(() => {
+      this.setState({loading: false});
     });
 
-    event.preventDefault();
+
   }
 
   render() {
     return (
       <div className="App">
         <header className="App-header">
-          Property Risk Assessment
+          OmnisciNet: Property Risk Assessment
         </header>
         <div className='row-container'>
           <div className='address-form'>
@@ -99,6 +103,11 @@ class TopComponent extends React.Component {
               value="Submit"
             />
             </form>
+
+            {this.state.loading && <div className="loader"></div>}
+{/* Uncomment and use this to style loading spinner            
+            {!this.state.loading && <div className="loader"></div>} */}
+
           </div>
 
           <div className='display-container'>
