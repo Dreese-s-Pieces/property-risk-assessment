@@ -60,10 +60,10 @@ class Air_Quality_Analytics():
     def get_air_quality_index(self, city_str):
         self.city_str = city_str
         try:
-            return get_request_data(self.base_url + self.city_str + "/?token=fe269bc83b983ff958090f5808afa12eed57f14f")['data']["aqi"]
+            return get_request_data(self.base_url + self.city_str + "/?token=fe269bc83b983ff958090f5808afa12eed57f14f")[
+                'data']["aqi"]
         except:
             pass
 
 # AQA = Air_Quality_Analytics()
 # print(AQA.get_local_air_quality_comparison('Los Angeles'))
-

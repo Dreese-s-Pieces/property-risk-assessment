@@ -223,7 +223,7 @@ class TopComponent extends React.Component {
                 </tr>
                 <tr>
                   <td className="table-label">Probability of AQI Being Significantly Better From Surrounding Cities: </td>
-                  <td className="table-data">{this.state.result.probability}</td>
+                  <td className="table-data">{1 - this.state.result.probability}</td>
                 </tr>
                 <tr>
                   <td className="table-label">Air Quality Index:</td>

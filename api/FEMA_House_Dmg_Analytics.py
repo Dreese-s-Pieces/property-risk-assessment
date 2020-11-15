@@ -14,6 +14,7 @@ class Disaster_Stats():
         self.disasters_csv = requests.get(url).json()
         self.disasters_csv = pd.DataFrame.from_dict(self.disasters_csv["HousingAssistanceOwners"])
         self.reg_coef = np.asarray([])
+        self.reg = 0
         self.reg_intercept = 0
 
     def get_state_level_disasters(self, state_str):
@@ -60,7 +61,6 @@ class Disaster_Stats():
         result = self.get_total_dmg_for_zip(zip_str) / self.get_total_dmg_for_state(state_str)
         if np.isnan(result):
             return 0
-
         return result
 
     def get_prop_zip_dmg_for_nation(self, zip_str):
@@ -85,23 +85,35 @@ class Disaster_Stats():
                                      self.disasters_csv['averageFemaInspectedDamage'])
         self.reg_coef = reg.coef_
         self.reg_intercept = reg.intercept_
+        self.reg = reg
 
     def inference(self, zip_code, population_density=0, median_home_value=0):
+        pd = population_density
+        mhv = median_home_value
         zp = int(zip_code)
         print(zp)
-        if population_density + median_home_value == 0:
+        if pd + mhv == 0:
             search = SearchEngine(simple_zipcode=False)
             zip_dct = search.by_zipcode(zp).to_dict()
-            population_density = zip_dct['population_density']
-            median_home_value = zip_dct['median_home_value']
-        inp = np.asarray([median_home_value, zip_code, population_density])
+            pd = zip_dct['population_density']
+            mhv = zip_dct['median_home_value']
+        print(mhv)
+        print(pd)
+        inp = np.asarray([float(mhv), float(zip_code), float(pd)])
+        print(inp)
+        print(self.reg_coef)
         result = 0
+        # self.reg_coef= map(lambda x: float(x),self.reg_coef)
+        # inp = np.asarray([[mhv, zip_code, pd]])
+        # print(inp)
+        # result = self.reg.predict(inp)[0]    
         try:
             result = np.dot(self.reg_coef, inp) + self.reg_intercept
             print(result)
         except:
             print('failed')
         print(result)
+
         return result
 
 # ds_stats = Disaster_Stats()
