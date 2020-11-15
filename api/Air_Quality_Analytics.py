@@ -59,3 +59,4 @@ class Air_Quality_Analytics():
             return get_request_data(self.base_url + self.city_str + "/?token=fe269bc83b983ff958090f5808afa12eed57f14f")['data']["aqi"]
         except:
             pass
+

@@ -20,7 +20,9 @@ class TopComponent extends React.Component {
       city: '',
       state: '',
       zip_code: '',
-      result: '',
+      result: {
+        top_regional_offenses: [['', '', ''], ['', '', ''], ['', '', '']]
+      },
     };
   }
 
@@ -29,11 +31,12 @@ class TopComponent extends React.Component {
   } 
 
   handleSubmit(event) {
-    let url = '/disaster?state=' + this.state.state + '&zip=' + this.state.zip_code
+    let url = '/data?state=' + this.state.state + '&zip=' + this.state.zip_code
 
     fetch(url).then(res => res.json()).then(data => {
       console.log(data);
       this.setState({result: data})
+
     });
 
     event.preventDefault();
@@ -87,18 +90,30 @@ class TopComponent extends React.Component {
           </div>
 
           <div className='display-container'>
-            <p>Street Address: {this.state.street_address}</p>
-            <p>City: {this.state.city}</p>
-            <p>State: {this.state.state}</p>
-            <p>Zip Code: {this.state.zip_code}</p>
-
+            <h3>Input Address</h3>
+            <div>
+              <p>Street Address: {this.state.street_address}</p>
+              <p>City: {this.state.city}</p>
+              <p>State: {this.state.state}</p>
+              <p>Zip Code: {this.state.zip_code}</p>
+            </div>
             <br/>
-
-            <p>Total Damage for Zip: {this.state.result.total_dmg_for_zip}</p>
-            <p>Total Damage for State: {this.state.result.total_dmg_for_state}</p>
-            <p>Total Damage: {this.state.result.total_dmg}</p>
-            <p>Property Damage for State: {this.state.result.prop_zip_dmg_for_state}</p>
-            <p>Property Damage for Nation: {this.state.result.prop_zip_dmg_for_nation}</p>
+            <h3>Weather Damage</h3>
+            <div>
+              <p>Total Damage for Zip: {this.state.result.total_dmg_for_zip}</p>
+              <p>Total Damage for State: {this.state.result.total_dmg_for_state}</p>
+              <p>Total Damage: {this.state.result.total_dmg}</p>
+              <p>Property Damage for State: {this.state.result.prop_zip_dmg_for_state}</p>
+              <p>Property Damage for Nation: {this.state.result.prop_zip_dmg_for_nation}</p>
+            </div>
+            <div>
+              <h3>Top 3 Regional Offenses</h3>
+              <ol>
+                <li>{this.state.result.top_regional_offenses[0][0]}</li>
+                <li>{this.state.result.top_regional_offenses[1][0]}</li>
+                <li>{this.state.result.top_regional_offenses[2][0]}</li>
+              </ol>
+            </div>
           </div>
         </div>
       </div>
