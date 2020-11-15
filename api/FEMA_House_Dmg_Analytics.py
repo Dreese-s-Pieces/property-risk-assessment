@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import requests
 from sklearn.linear_model import LinearRegression
 
@@ -21,19 +22,39 @@ class Disaster_Stats():
         return state_csv.count() / nat_csv.count()
 
     def get_total_dmg_for_zip(self, zip_str):
-        return self.disasters_csv[self.disasters_csv['zipCode'] == zip_str]['averageFemaInspectedDamage'].sum()
+        result = self.disasters_csv[self.disasters_csv['zipCode'] == zip_str]['averageFemaInspectedDamage'].sum()
+        if np.isnan(result):
+            return 0
+        
+        return result
 
     def get_total_dmg_for_state(self, state_str):
-        return self.disasters_csv[self.disasters_csv['state'] == state_str]['averageFemaInspectedDamage'].sum()
+        result = self.disasters_csv[self.disasters_csv['state'] == state_str]['averageFemaInspectedDamage'].sum()
+        if np.isnan(result):
+            return 0
+        
+        return result
 
     def get_total_dmg(self):
-        return self.disasters_csv['averageFemaInspectedDamage'].sum()
+        result =  self.disasters_csv['averageFemaInspectedDamage'].sum()
+        if np.isnan(result):
+            return 0
+        
+        return result
 
     def get_prop_zip_dmg_for_state(self, zip_str,state_str):
-        return self.get_total_dmg_for_zip(zip_str)/self.get_total_dmg_for_state(state_str)
+        result = self.get_total_dmg_for_zip(zip_str)/self.get_total_dmg_for_state(state_str)
+        if np.isnan(result):
+            return 0
+        
+        return result
 
     def get_prop_zip_dmg_for_nation(self, zip_str):
-        return self.get_total_dmg_for_zip(zip_str)/self.get_total_dmg()
+        result = self.get_total_dmg_for_zip(zip_str)/self.get_total_dmg()
+        if np.isnan(result):
+            return 0
+        
+        return result
 
     # def train(self):
     #     reg = LinearRegression().fit(self.disasters_csv[], y)

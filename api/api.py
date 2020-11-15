@@ -7,14 +7,39 @@ from uszipcode import SearchEngine
 
 app = Flask(__name__)
 
+northeast = {'PA', 'NY', 'NJ', 'VT', 'NH', 'MA', 'CT', 'RI', 'ME'}
+midwest = {'ND', 'SD', 'NE', 'KS', 'MN', 'IA', 'MO', 'WI', 'MI', 'IL', 'IN', 'OH'}
+south = {'TX', 'OK', 'AR', 'LA', 'MS', 'AL', 'TN', 'KY', 'FL', 'GA', 'SC', 'NC', 'VA', 'WV', 'MD', 'DE'}
+west = {'WA', 'OR', 'CA', 'AK', 'HI', 'ID', 'MT', 'WY', 'NV', 'UT', 'CO', 'AZ', 'NM'}
 
 @app.route('/data')
 def get_data():
-    zip, state, city = request.args['zip'], request.args['state'], request.args['city']
-    result = {}
-    result.update(get_zip_dmg(zip, state))
-    result.update(get_crime_analytics_data(state))
-    result.update(get_air_quality_data(zip, city))
+    zip, state, city= request.args['zip'], request.args['state'], request.args['city']
+    if state in northeast:
+        region = 'Northeast'
+    elif state in midwest:
+        region = 'Midwest'
+    elif state in south:
+        region = 'South'
+    else:
+        region = 'West'
+    
+    result = { 'region': region }
+    try:
+        result.update(get_zip_dmg(zip, state))
+    except:
+        pass
+    
+    try:
+        result.update(get_crime_analytics_data(region))
+    except:
+        pass
+    
+    try:
+        result.update(get_air_quality_data(zip, city))
+    except:
+        pass
+    
     return result
 
 
@@ -39,9 +64,6 @@ def get_air_quality_data(zp, city=""):
     return summary_dct
 
 
-def get_crime_analytics_data(state):
+def get_crime_analytics_data(region):
     cr_stats = Crime_Stats()
-    # Fill out with state:designation function
-    region_dct = {'OH': 'Midwest'}
-    region = region_dct[state]
     return {'top_regional_offenses': cr_stats.get_region_top_three_offense_proportions(region)}

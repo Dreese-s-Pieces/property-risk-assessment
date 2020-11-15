@@ -26,11 +26,13 @@ class TopComponent extends React.Component {
         total_dmg: 0,
         prop_zip_dmg_for_state: 0,
         prop_zip_dmg_for_nation: 0,
-        top_regional_offenses: [['', '', ''], ['', '', ''], ['', '', '']],
+        top_regional_offenses: [['', 0, 0], ['', 0, 0], ['', 0, 0]],
         deviation: '',
         probability: ''
       },
     };
+
+
   }
 
   handleChange(event) {
@@ -38,7 +40,9 @@ class TopComponent extends React.Component {
   } 
 
   handleSubmit(event) {
+
     let url = '/data?state=' + this.state.state + '&zip=' + this.state.zip_code + '&city=' + this.state.city
+
 
     fetch(url).then(res => res.json()).then(data => {
       console.log(data);
@@ -57,6 +61,7 @@ class TopComponent extends React.Component {
         </header>
         <div className='row-container'>
           <div className='address-form'>
+            <h3>Search by Address</h3>
             <form onSubmit={this.handleSubmit}>
 
             <input className="address-input"
@@ -123,36 +128,58 @@ class TopComponent extends React.Component {
             <div>
               <table>
                 <tr>
-                  <td className="table-label">Total Damage for Zip Code:</td>
+                  <td className="table-label">Total Damage for Zip Code {this.state.zip_code}:</td>
                   <td className="table-data">${this.state.result.total_dmg_for_zip.toFixed(2)}</td>
                 </tr>
                 <tr>
-                  <td className="table-label">Total Damage for State:</td>
+                  <td className="table-label">Total Damage for State {this.state.state}:</td>
                   <td className="table-data">${this.state.result.total_dmg_for_state.toFixed(2)}</td>
                 </tr>
-                <tr>
+                {/* <tr>
                   <td className="table-label">Total Damage:</td>
                   <td className="table-data">${this.state.result.total_dmg.toFixed(2)}</td>
+                </tr> */}
+                <tr>
+                  <td className="table-label">Zip Code Percentage of State {this.state.state} Damage:</td>
+                  <td className="table-data">{this.state.result.prop_zip_dmg_for_state * 100}%</td>
                 </tr>
                 <tr>
-                  <td className="table-label">Property Damage for State:</td>
-                  <td className="table-data">${this.state.result.prop_zip_dmg_for_state.toFixed(2)}</td>
-                </tr>
-                <tr>
-                  <td className="table-label">Property Damage for Nation:</td>
-                  <td className="table-data">${this.state.result.prop_zip_dmg_for_nation.toFixed(2)}</td>
+                  <td className="table-label">State Percentage of Nation Damage:</td>
+                  <td className="table-data">{this.state.result.prop_zip_dmg_for_nation * 100}%</td>
                 </tr>
               </table>
+              <p>*Damage since 2013</p>
             </div>
 
             <hr/>
             <div>
-              <h3>Top 3 Regional Offenses</h3>
-              <ol>
-                <li>{this.state.result.top_regional_offenses[0][0]}</li>
-                <li>{this.state.result.top_regional_offenses[1][0]}</li>
-                <li>{this.state.result.top_regional_offenses[2][0]}</li>
-              </ol>
+            <h3>Most Common Crimes for Region {this.state.result.region}</h3>
+              <table className="crime-table">
+                <tr>
+                  <th>Position</th>
+                  <th>Type of Crime</th>
+                  <th>Percentage of Crimes in Region {this.state.result.region}</th>
+                  <th>Percentage of Type of Crime in Nation</th>
+                </tr>
+                <tr>
+                  <td>1</td>
+                  <td>{this.state.result.top_regional_offenses[0][0]}</td>
+                  <td>{this.state.result.top_regional_offenses[0][1].toFixed(2)}%</td>
+                  <td>{this.state.result.top_regional_offenses[0][2].toFixed(2)}%</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>{this.state.result.top_regional_offenses[1][0]}</td>
+                  <td>{this.state.result.top_regional_offenses[1][1].toFixed(2)}%</td>
+                  <td>{this.state.result.top_regional_offenses[1][2].toFixed(2)}%</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>{this.state.result.top_regional_offenses[2][0]}</td>
+                  <td>{this.state.result.top_regional_offenses[2][1].toFixed(2)}%</td>
+                  <td>{this.state.result.top_regional_offenses[2][2].toFixed(2)}%</td>
+                </tr>
+              </table>
             </div>
 
             <hr/>
