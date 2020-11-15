@@ -51,15 +51,15 @@ def get_zip_dmg(zp, state):
         'total_dmg_for_state': dis_stats.get_total_dmg_for_state(state),
         'total_dmg': dis_stats.get_total_dmg(),
         'prop_zip_dmg_for_state': dis_stats.get_prop_zip_dmg_for_state(zp, state),
-        'prop_zip_dmg_for_nation': dis_stats.get_prop_zip_dmg_for_nation(zp)
-        # 'predicted_zip_dmg': dis_stats.inference(zp)
+        'prop_zip_dmg_for_nation': dis_stats.get_prop_zip_dmg_for_nation(zp),
+        'predicted_zip_dmg': dis_stats.inference(zp)
     }
 
 
 def get_air_quality_data(zp, city=""):
     aq_stats = Air_Quality_Analytics()
     city_str = city
-    if len(city) > 0:
+    if len(city_str) > 0:
         search = SearchEngine(simple_zipcode=False)
         city_str = search.by_zipcode(zp).to_dict()['major_city']
     summary_dct = aq_stats.get_local_air_quality_comparison(city_str)
