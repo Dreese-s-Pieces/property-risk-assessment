@@ -26,11 +26,15 @@ class TopComponent extends React.Component {
         total_dmg: 0,
         prop_zip_dmg_for_state: 0,
         prop_zip_dmg_for_nation: 0,
+        predicted_zip_dmg: 0,
+        predicted_total: 0,
         top_regional_offenses: [['', 0, 0], ['', 0, 0], ['', 0, 0]],
         deviation: '',
-        probability: ''
+        probability: '',
+        aqi: ''
       },
-      loading: false
+      loading: false,
+      predicted_dmg: true
     };
 
 
@@ -50,6 +54,11 @@ class TopComponent extends React.Component {
     fetch(url).then(res => res.json()).then(data => {
       console.log(data);
       this.setState({result: data})
+
+      if (this.state.predicted_dmg < 0) {
+        this.setState({predicted_dmg: false})
+      }
+
     }).finally(() => {
       this.setState({loading: false});
     });
@@ -61,7 +70,7 @@ class TopComponent extends React.Component {
     return (
       <div className="App">
         <header className="App-header">
-          OmnisciNet: Property Risk Assessment
+          OmniscNet: Property Risk Assessment
         </header>
         <div className='row-container'>
           <div className='address-form'>
@@ -98,7 +107,7 @@ class TopComponent extends React.Component {
               onChange={this.handleChange}
             />
             <br/>
-            <input className="address-input"
+            <input className="address-input button"
               type="submit" 
               value="Submit"
             />
@@ -159,6 +168,18 @@ class TopComponent extends React.Component {
               </table>
               <p>*Damage since 2013</p>
             </div>
+            <hr/>
+
+            <div>
+              <h3>Predicted Metrics</h3>
+              <table>
+                <tr>
+                  <td className="table-label">Weather Damage for Zip Code {this.state.zip_code}:</td>
+                  <td className="table-data">${this.state.result.predicted_zip_dmg.toFixed(2)}</td>
+              <td className="table-data">{this.state.predicted_dmg && <span>&uarr;</span>}{!this.state.predicted_dmg && <span>&darr;</span>}</td>
+                </tr>
+              </table>
+            </div>
 
             <hr/>
             <div>
@@ -203,6 +224,10 @@ class TopComponent extends React.Component {
                 <tr>
                   <td className="table-label">Probability of AQI Being Significantly Better From Surrounding Cities: </td>
                   <td className="table-data">{this.state.result.probability}</td>
+                </tr>
+                <tr>
+                  <td className="table-label">Air Quality Index:</td>
+                  <td className="table-data">{this.state.result.aqi}</td>
                 </tr>
               </table>
             </div>

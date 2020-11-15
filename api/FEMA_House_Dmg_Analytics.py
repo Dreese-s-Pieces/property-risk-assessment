@@ -57,7 +57,11 @@ class Disaster_Stats():
         return result
 
     def get_prop_zip_dmg_for_state(self, zip_str, state_str):
-        return self.get_total_dmg_for_zip(zip_str) / self.get_total_dmg_for_state(state_str)
+        result = self.get_total_dmg_for_zip(zip_str) / self.get_total_dmg_for_state(state_str)
+        if np.isnan(result):
+            return 0
+
+        return result
 
     def get_prop_zip_dmg_for_nation(self, zip_str):
         result = self.get_total_dmg_for_zip(zip_str) / self.get_total_dmg()
@@ -83,17 +87,22 @@ class Disaster_Stats():
         self.reg_intercept = reg.intercept_
 
     def inference(self, zip_code, population_density=0, median_home_value=0):
+        zp = int(zip_code)
+        print(zp)
         if population_density + median_home_value == 0:
             search = SearchEngine(simple_zipcode=False)
-            zip_dct = search.by_zipcode(zip_code).to_dict()
+            zip_dct = search.by_zipcode(zp).to_dict()
             population_density = zip_dct['population_density']
             median_home_value = zip_dct['median_home_value']
         inp = np.asarray([median_home_value, zip_code, population_density])
-        result = np.dot(self.reg_coef, inp) + self.reg_intercept
-        if np.isnan(result):
-            return 0
+        result = 0
+        try:
+            result = np.dot(self.reg_coef, inp) + self.reg_intercept
+            print(result)
+        except:
+            print('failed')
+        print(result)
         return result
-
 
 # ds_stats = Disaster_Stats()
 # ds_stats.train()
