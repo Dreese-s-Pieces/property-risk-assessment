@@ -21,7 +21,14 @@ class TopComponent extends React.Component {
       state: '',
       zip_code: '',
       result: {
-        top_regional_offenses: [['', '', ''], ['', '', ''], ['', '', '']]
+        total_dmg_for_zip: 0,
+        total_dmg_for_state: 0,
+        total_dmg: 0,
+        prop_zip_dmg_for_state: 0,
+        prop_zip_dmg_for_nation: 0,
+        top_regional_offenses: [['', '', ''], ['', '', ''], ['', '', '']],
+        deviation: '',
+        probability: ''
       },
     };
   }
@@ -31,7 +38,7 @@ class TopComponent extends React.Component {
   } 
 
   handleSubmit(event) {
-    let url = '/data?state=' + this.state.state + '&zip=' + this.state.zip_code
+    let url = '/data?state=' + this.state.state + '&zip=' + this.state.zip_code + '&city=' + this.state.city
 
     fetch(url).then(res => res.json()).then(data => {
       console.log(data);
@@ -92,20 +99,53 @@ class TopComponent extends React.Component {
           <div className='display-container'>
             <h3>Input Address</h3>
             <div>
-              <p>Street Address: {this.state.street_address}</p>
-              <p>City: {this.state.city}</p>
-              <p>State: {this.state.state}</p>
-              <p>Zip Code: {this.state.zip_code}</p>
+              <table>
+                <tr>
+                  <td className="table-label">Street Address:</td>
+                  <td>{this.state.street_address}</td>
+                </tr>
+                <tr>
+                  <td className="table-label">City:</td>
+                  <td>{this.state.city}</td>
+                </tr>
+                <tr>
+                  <td className="table-label">State:</td>
+                  <td>{this.state.state}</td>
+                </tr>
+                <tr>
+                  <td className="table-label">Zip Code:</td>
+                  <td>{this.state.zip_code}</td>
+                </tr> 
+              </table>
             </div>
-            <br/>
+            <hr/>
             <h3>Weather Damage</h3>
             <div>
-              <p>Total Damage for Zip: {this.state.result.total_dmg_for_zip}</p>
-              <p>Total Damage for State: {this.state.result.total_dmg_for_state}</p>
-              <p>Total Damage: {this.state.result.total_dmg}</p>
-              <p>Property Damage for State: {this.state.result.prop_zip_dmg_for_state}</p>
-              <p>Property Damage for Nation: {this.state.result.prop_zip_dmg_for_nation}</p>
+              <table>
+                <tr>
+                  <td className="table-label">Total Damage for Zip Code:</td>
+                  <td className="table-data">${this.state.result.total_dmg_for_zip.toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <td className="table-label">Total Damage for State:</td>
+                  <td className="table-data">${this.state.result.total_dmg_for_state.toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <td className="table-label">Total Damage:</td>
+                  <td className="table-data">${this.state.result.total_dmg.toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <td className="table-label">Property Damage for State:</td>
+                  <td className="table-data">${this.state.result.prop_zip_dmg_for_state.toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <td className="table-label">Property Damage for Nation:</td>
+                  <td className="table-data">${this.state.result.prop_zip_dmg_for_nation.toFixed(2)}</td>
+                </tr>
+              </table>
             </div>
+
+            <hr/>
             <div>
               <h3>Top 3 Regional Offenses</h3>
               <ol>
@@ -114,6 +154,23 @@ class TopComponent extends React.Component {
                 <li>{this.state.result.top_regional_offenses[2][0]}</li>
               </ol>
             </div>
+
+            <hr/>
+
+            <div>
+              <h3>Air Quality</h3>
+              <table>
+                <tr>
+                  <td className="table-label">Deviation of AQI From Closest Cities: </td>
+                  <td className="table-data">{this.state.result.deviation}</td>
+                </tr>
+                <tr>
+                  <td className="table-label">Probability of AQI Being Significantly Better From Surrounding Cities: </td>
+                  <td className="table-data">{this.state.result.probability}</td>
+                </tr>
+              </table>
+            </div>
+
           </div>
         </div>
       </div>

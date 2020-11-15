@@ -10,11 +10,11 @@ app = Flask(__name__)
 
 @app.route('/data')
 def get_data():
-    zip, state = request.args['zip'], request.args['state']
+    zip, state, city = request.args['zip'], request.args['state'], request.args['city']
     result = {}
     result.update(get_zip_dmg(zip, state))
     result.update(get_crime_analytics_data(state))
-    # result.update(get_air_quality_data(zip))
+    result.update(get_air_quality_data(zip, city))
     return result
 
 

@@ -6,6 +6,10 @@ p {
   text-align: left;
 }
 
+hr {
+  color: black;
+}
+
 .App {
   text-align: center;
 }
@@ -45,4 +49,12 @@ p {
 
 .address-input {
   margin: 10px;
+}
+
+.table-label {
+  text-align: right;
+}
+
+.table-data {
+  text-align: center;
 }
