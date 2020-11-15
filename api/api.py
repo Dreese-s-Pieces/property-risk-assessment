@@ -1,7 +1,7 @@
 import time
-from api.FEMA_House_Dmg_Analytics import *
-from api.Air_Quality_Analytics import *
-from api.Crime_Analytics import *
+from FEMA_House_Dmg_Analytics import *
+from Air_Quality_Analytics import *
+from Crime_Analytics import *
 from flask import Flask, request
 from uszipcode import SearchEngine
 
@@ -36,7 +36,9 @@ def get_air_quality_data():
 def get_crime_analytics_data():
     cr_stats = Crime_Stats()
     # Fill out with state:designation function
-    region_dct = {}
+    region_dct = {'OH': 'Midwest'}
     state = request.arg['state']
     region = region_dct['state']
     return {'Top 3 Regional Offenses': cr_stats.get_region_top_three_offense_proportions(region)}
+
+

@@ -33,3 +33,6 @@ class Disaster_Stats():
 
     def get_prop_zip_dmg_for_nation(self, zip_str):
         return self.get_total_dmg_for_zip(zip_str)/self.get_total_dmg()
+
+    def train(self):
+        pass
