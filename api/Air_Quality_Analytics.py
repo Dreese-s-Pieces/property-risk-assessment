@@ -64,6 +64,6 @@ class Air_Quality_Analytics():
         except:
             pass
 
-AQA = Air_Quality_Analytics()
-print(AQA.get_local_air_quality_comparison('Los Angeles'))
+# AQA = Air_Quality_Analytics()
+# print(AQA.get_local_air_quality_comparison('Los Angeles'))
 

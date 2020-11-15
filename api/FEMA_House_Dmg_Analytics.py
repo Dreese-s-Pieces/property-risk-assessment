@@ -14,6 +14,7 @@ class Disaster_Stats():
         self.disasters_csv = requests.get(url).json()
         self.disasters_csv = pd.DataFrame.from_dict(self.disasters_csv["HousingAssistanceOwners"])
         self.reg_coef = np.asarray([])
+        self.reg_intercept = 0
 
     def get_state_level_disasters(self, state_str):
         print(self.disasters_csv[self.disasters_csv['state'] == state_str])
@@ -42,23 +43,24 @@ class Disaster_Stats():
         return result
 
     def get_total_dmg(self):
-        result =  self.disasters_csv['averageFemaInspectedDamage'].sum()
+        result = self.disasters_csv['averageFemaInspectedDamage'].sum()
         if np.isnan(result):
             return 0
 
         return result
 
-    def get_prop_zip_dmg_for_state(self, zip_str,state_str):
-        result = self.get_total_dmg_for_zip(zip_str)/self.get_total_dmg_for_state(state_str)
+    def get_prop_zip_dmg_for_state(self, zip_str, state_str):
+        result = self.get_total_dmg_for_zip(zip_str) / self.get_total_dmg_for_state(state_str)
         if np.isnan(result):
             return 0
 
         return result
+
     def get_prop_zip_dmg_for_state(self, zip_str, state_str):
         return self.get_total_dmg_for_zip(zip_str) / self.get_total_dmg_for_state(state_str)
 
     def get_prop_zip_dmg_for_nation(self, zip_str):
-        result = self.get_total_dmg_for_zip(zip_str)/self.get_total_dmg()
+        result = self.get_total_dmg_for_zip(zip_str) / self.get_total_dmg()
         if np.isnan(result):
             return 0
 
@@ -75,8 +77,10 @@ class Disaster_Stats():
             train_dct['median_home_value'].append(zip_dct['median_home_value'])
             train_dct['zip_code'] = zp
             train_dct['population_density'].append(zip_dct['population_density'])
-        reg = LinearRegression().fit(pd.DataFrame(train_dct).fillna(method='bfill'), self.disasters_csv['averageFemaInspectedDamage'])
+        reg = LinearRegression().fit(pd.DataFrame(train_dct).fillna(method='bfill'),
+                                     self.disasters_csv['averageFemaInspectedDamage'])
         self.reg_coef = reg.coef_
+        self.reg_intercept = reg.intercept_
 
     def inference(self, zip_code, population_density=0, median_home_value=0):
         if population_density + median_home_value == 0:
@@ -85,12 +89,12 @@ class Disaster_Stats():
             population_density = zip_dct['population_density']
             median_home_value = zip_dct['median_home_value']
         inp = np.asarray([median_home_value, zip_code, population_density])
-        result = np.dot(self.reg_coef, inp)
+        result = np.dot(self.reg_coef, inp) + self.reg_intercept
         if np.isnan(result):
             return 0
         return result
 
 
-ds_stats = Disaster_Stats()
-ds_stats.train()
-# print(ds_stats.inference(zip_code=43017))
+# ds_stats = Disaster_Stats()
+# ds_stats.train()
+# print(ds_stats.inference(zip_code=43201))
