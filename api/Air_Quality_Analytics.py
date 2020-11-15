@@ -45,10 +45,10 @@ class Air_Quality_Analytics():
                                                                            'aqi'].mean() - local_df[
                                                                            'aqi'].mean()
             air_quality_comp[
-                'Probability of AQI Being Significantly Different From Surrounding Cities'] = one_samp_t_test(
+                'Probability of AQI Being Significantly Better From Surrounding Cities'] = one_samp_t_test(
                 local_df[local_df['name'].str.contains(city_str)], air_quality_comp['Deviation of AQI From Closest Cities'] )
-            air_quality_comp['Probability of AQI Being Significantly Different From Surrounding Cities'] = t.sf(
-                np.abs(air_quality_comp['Probability of AQI Being Significantly Different From Surrounding Cities']),
+            air_quality_comp['Probability of AQI Being Significantly Better From Surrounding Cities'] = t.sf(
+                np.abs(air_quality_comp['Probability of AQI Being Significantly Better From Surrounding Cities']),
                 local_df.count() - 1)[0]
 
             return air_quality_comp

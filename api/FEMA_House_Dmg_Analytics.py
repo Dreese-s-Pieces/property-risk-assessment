@@ -1,5 +1,6 @@
 import pandas as pd
 import requests
+from sklearn.linear_model import LinearRegression
 
 
 class Disaster_Stats():
@@ -35,4 +36,5 @@ class Disaster_Stats():
         return self.get_total_dmg_for_zip(zip_str)/self.get_total_dmg()
 
     def train(self):
-        pass
+        reg = LinearRegression().fit(self.disasters_csv[], y)
+        reg.score(X, y)
