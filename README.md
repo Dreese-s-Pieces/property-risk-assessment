@@ -1,5 +1,5 @@
 # PropertyRiskAssessment
-Assesses (human)risk for buying a piece of property in a given area 
+Webapp for Hack OHI/O 2020 that assesses risk for a given location based on crime, air quality, and FEMA disaster data. 
 
 # To Run Locally with Flask Server
 * Open 2 terminals
